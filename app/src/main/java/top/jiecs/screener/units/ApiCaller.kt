@@ -130,5 +130,25 @@ class ApiCaller {
             iWindowManager::class.java, iWindowManager,
             "clearForcedDisplayDensityForUser", Display.DEFAULT_DISPLAY, 0
         )
+        applyOverscan(0, 0, 0, 0)
+    }
+
+    /**
+     * Shifts the rendered (logical) area within the physical screen bounds.
+     * Equivalent to `adb shell wm overscan LEFT,TOP,RIGHT,BOTTOM`.
+     * Increasing `top` pushes the visible content down (adds empty space above);
+     * increasing `bottom` pushes it up (adds empty space below).
+     * Used to move the image up/down when the forced vertical resolution
+     * is smaller than the physical one, instead of leaving it centered.
+     */
+    fun applyOverscan(left: Int, top: Int, right: Int, bottom: Int) {
+        try {
+            HiddenApiBypass.invoke(
+                iWindowManager::class.java, iWindowManager,
+                "setOverscan", Display.DEFAULT_DISPLAY, left, top, right, bottom
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

@@ -79,6 +79,29 @@
         app:layout_constraintStart_toEndOf="@+id/text_scale"
         app:layout_constraintTop_toTopOf="@+id/text_scale" />
 
+    <TextView
+        android:id="@+id/text_vertical_position"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/vertical_position"
+        app:layout_constraintBottom_toTopOf="@+id/chip_group"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/slider_scale" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/slider_vertical_position"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:stepSize="5"
+        android:value="0"
+        android:valueFrom="-100"
+        android:valueTo="100"
+        android:contentDescription="@string/vertical_position"
+        app:layout_constraintBottom_toBottomOf="@+id/text_vertical_position"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/text_vertical_position"
+        app:layout_constraintTop_toTopOf="@+id/text_vertical_position" />
+
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/chip_group"
         android:layout_width="0dp"
@@ -86,7 +109,7 @@
         android:layout_marginTop="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/slider_scale"
+        app:layout_constraintTop_toBottomOf="@+id/text_vertical_position"
         app:selectionRequired="true"
         app:singleSelection="true" />
 

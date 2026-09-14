@@ -48,6 +48,9 @@ class ResolutionFragment : Fragment() {
     private val scaledDpi get() = textDpi.text.toString().toFloatOrNull() ?: 0f
     private val scaleValue get() = binding.resolutionEditor.sliderScale.value.toInt()
 
+    // -100 = image pushed to the very top, 0 = centered, 100 = pushed to the very bottom
+    private val verticalPositionValue get() = binding.resolutionEditor.sliderVerticalPosition.value.toInt()
+
     private val physical get() = resolutionViewModel.physicalResolutionMap.value
 
     // Calculate the DPI that keeps the display size proportionally scaled
@@ -89,6 +92,7 @@ class ResolutionFragment : Fragment() {
             textHeight.setText(it?.get("height")?.toInt()?.toString())
             textWidth.setText(it?.get("width")?.toInt()?.toString())
             textDpi.setText(it?.get("dpi")?.toInt()?.toString())
+            updateVerticalPositionEnabled()
         }
         val chipGroup = binding.resolutionEditor.chipGroup
         resolutionViewModel.usersList.observe(viewLifecycleOwner) {
@@ -127,8 +131,12 @@ class ResolutionFragment : Fragment() {
                 scaledWidth,
                 scaledDpi
             )
+            applyVerticalPosition()
             val navController = findNavController()
             navController.navigate(R.id.nav_resolution_confirmation)
+        }
+        binding.resolutionEditor.sliderVerticalPosition.addOnChangeListener { _, _, _ ->
+            updateVerticalPositionEnabled()
         }
         binding.btReset.setOnClickListener {
             if (mainViewModel.shizukuPermissionGranted.value != true) return@setOnClickListener
@@ -165,6 +173,31 @@ class ResolutionFragment : Fragment() {
         }
         updateDpiEditor()
         checkValidResolution(null, null)
+        updateVerticalPositionEnabled()
+    }
+
+    // The vertical position slider only makes sense when the forced height
+    // is smaller than the physical height (i.e. there is empty space to distribute).
+    private fun updateVerticalPositionEnabled() {
+        val ph = physical?.get("height") ?: return
+        val enabled = scaledHeight > 0f && scaledHeight < ph
+        binding.resolutionEditor.sliderVerticalPosition.isEnabled = enabled
+    }
+
+    private fun applyVerticalPosition() {
+        val physicalHeight = physical?.get("height") ?: return
+        val diff = (physicalHeight - scaledHeight).roundToInt()
+        if (diff <= 0) {
+            apiCaller.applyOverscan(0, 0, 0, 0)
+            return
+        }
+        // verticalPositionValue: -100 -> all empty space below (image at top)
+        //                          0   -> empty space split evenly (centered)
+        //                        100 -> all empty space above (image at bottom)
+        val bottomRatio = (verticalPositionValue + 100) / 200f
+        val bottom = (diff * bottomRatio).roundToInt()
+        val top = diff - bottom
+        apiCaller.applyOverscan(0, top, 0, bottom)
     }
 
     private fun updateDpiEditor() {
