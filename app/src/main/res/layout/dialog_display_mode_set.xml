@@ -7,10 +7,11 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:name="top.jiecs.screener.ui.resolution.ResolutionFragment"
         android:id="@+id/resolution_fragment"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         tools:layout="@layout/fragment_resolution"/>
 
 
