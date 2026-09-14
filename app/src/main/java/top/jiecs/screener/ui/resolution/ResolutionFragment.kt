@@ -117,6 +117,7 @@ class ResolutionFragment : Fragment() {
         }
         textWidth.doAfterTextChanged { editable: Editable? ->
             handleWidthTextChange(editable ?: return@doAfterTextChanged)
+        textHeight.doAfterTextChanged { updateVerticalPositionEnabled() }
         }
         textDpi.doAfterTextChanged { s: Editable? ->
             if (s.isNullOrBlank()) return@doAfterTextChanged
